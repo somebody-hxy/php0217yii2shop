@@ -35,10 +35,18 @@ class Goods extends \yii\db\ActiveRecord
         return 'goods';
     }
 
+    public function getGoodsCategory(){
+        return $this->hasOne(GoodsCategory::className(),['id'=>'goods_category_id']);
+    }
+    public function getBrand(){
+        return $this->hasOne(Brand::className(),['id'=>'brand_id']);
+    }
+    //查询所有的商品分类
     public static function getCategoryOptions()
     {
         return ArrayHelper::map(GoodsCategory::find()->asArray()->all(),'id','name');
     }
+    //查询所有的品牌
     public static function getBrandOptions()
     {
         return ArrayHelper::map(Brand::find()->where(['status'=>1])->asArray()->all(),'id','name');
@@ -49,7 +57,7 @@ class Goods extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'sn'], 'required'],
+            [['name'], 'required'],
             [['goods_category_id', 'brand_id', 'stock', 'is_on_sale', 'status', 'sort', 'create_time'], 'integer'],
             [['market_price', 'shop_price'], 'number'],
             [['name', 'sn'], 'string', 'max' => 20],

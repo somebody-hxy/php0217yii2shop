@@ -25,7 +25,9 @@ class GoodsCategory extends \yii\db\ActiveRecord
     {
         return 'goods_category';
     }
-
+    public function getParent(){
+        return $this->hasOne(GoodsCategory::className(),['id'=>'parent_id']);
+    }
     /**
      * @inheritdoc
      */

@@ -13,7 +13,7 @@
         <?php
         foreach($model as $brand_info):
             //判断status的值
-            if(($brand_info->status)>-1){
+            if(($brand_info->status)>0){
             ?>
             <tr>
                 <td><?=$brand_info->id?></td>

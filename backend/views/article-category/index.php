@@ -10,7 +10,7 @@
             <th>类型</th>
             <th>操作</th>
         </tr>
-        <?php foreach($model as $cate_list):if(($cate_list->status)>-1){?>
+        <?php foreach($model as $cate_list):if(($cate_list->status)>0){?>
             <tr>
                 <td><?=$cate_list->id?></td>
                 <td><?=$cate_list->name?></td>

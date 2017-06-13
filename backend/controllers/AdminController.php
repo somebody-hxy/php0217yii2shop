@@ -11,6 +11,7 @@ class AdminController extends \yii\web\Controller
     //添加数据
     public function actionAdd()
     {
+		$model=new Admin();
         return $this->render('add');
     }
     //修改数据

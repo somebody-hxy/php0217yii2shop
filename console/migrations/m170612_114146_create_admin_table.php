@@ -17,7 +17,7 @@ class m170612_114146_create_admin_table extends Migration
             //用户名
             'username'=>$this->string(30)->notNull()->comment('用户名'),
             //密码
-            'password'=>$this->string(100)->notNull()->comment('密码'),
+            'password_hash'=>$this->string(100)->notNull()->comment('密码'),
             //状态
             'status'=>$this->smallInteger(2)->comment('状态'),
             //添加时间

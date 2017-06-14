@@ -14,11 +14,17 @@ class GoodsController extends Controller{
     public function actionIndex(){
         $key=isset($_GET['key'])? $_GET['key']: '';
         $query = Goods::find()->andWhere(['like','name',$key]);
-        //$query=Goods::find()->where(['status'=>1]);
+//        $query = Goods::find();
+//        if($name=\Yii::$app->request->get('name')){
+//            $query->andWhere(['like','name',$name]);
+//        }
+//        if($sn=\Yii::$app->request->get('sn')){
+//            $query->andWhere(['like','sn',$sn]);
+//        }
         $total=$query->count();
         $page=new Pagination([
             'totalCount'=>$total,
-            'defaultPageSize'=>1,
+            'defaultPageSize'=>2,
         ]);
         $model=$query->offset($page->offset)->limit($page->limit)->all();
         return $this->render('index',['model'=>$model,'page'=>$page]);
@@ -67,7 +73,6 @@ class GoodsController extends Controller{
                 $model->create_time=time();
                 $model->save();
                 $goodsday->save();
-
                 //验证商品详情
                 if($goodsintro->validate()){
                     $goodsintro->goods_id=$model->id;

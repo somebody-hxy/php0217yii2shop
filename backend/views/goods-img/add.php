@@ -1,7 +1,7 @@
 <?php
 $form=\yii\bootstrap\ActiveForm::begin();
-echo $form->field($model,'goods_id');
-echo $form->field($model,'goods_name')->dropDownList(\backend\models\GoodsImg::getGoodsOptions(),['prompt'=>'=请商品名称分类=']);
+//echo $form->field($model,'goods_id');
+echo $form->field($model,'goods_id')->dropDownList(\backend\models\GoodsImg::getGoodsOptions(),['prompt'=>'=请商品名称分类=']);
 echo $form->field($model,'goods_logo')->hiddenInput();
 echo \yii\bootstrap\Html::fileInput('test', NULL, ['id' => 'test']);
 echo \xj\uploadify\Uploadify::widget([

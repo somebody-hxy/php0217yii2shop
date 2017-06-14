@@ -1,12 +1,18 @@
 <?php
-\yii\bootstrap\ActiveForm::begin([
-    'method' => 'get'
+$form=\yii\bootstrap\ActiveForm::begin([
+    'action'=>\yii\helpers\Url::to(['goods/index']),
+    'method'=>'get',
+//    'options'=>['class'=>'form-inline'],
 ]);
 echo'<div style="text-align: right;height:45px;">';
     echo  \yii\bootstrap\Html::textInput('key');
     echo \yii\bootstrap\Html::submitButton('搜索',['class'=>'btn btn-primary btn-xs']);
-    \yii\bootstrap\ActiveForm::end();
+\yii\bootstrap\ActiveForm::end();
 echo'</div>';
+//echo $form->field($model,'name')->textInput(['placeholder'=>'商品名称'])->label(false);
+//echo $form->field($model,'sn')->textInput(['placeholder'=>'货号'])->label(false);
+//echo \yii\bootstrap\Html::submitButton('搜索',['class'=>'btn btn-primary btn-xs']);
+//\yii\bootstrap\ActiveForm::end();
 ?>
 
 

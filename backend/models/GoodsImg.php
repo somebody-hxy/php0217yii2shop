@@ -40,7 +40,7 @@ class GoodsImg extends \yii\db\ActiveRecord
         return [
             [['goods_id', 'goods_status'], 'integer'],
             [['goods_logo'], 'string', 'max' => 255],
-            [['goods_name'], 'string', 'max' => 50],
+//            [['goods_name'], 'string', 'max' => 50],
         ];
     }
 
@@ -51,8 +51,8 @@ class GoodsImg extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'goods_id' => '商品ID',
-            'goods_name' => '商品名称',
+            'goods_id' => '商品名称',
+//            'goods_name' => '商品名称',
             'goods_status' => '商品状态',
             'goods_logo' => '商品logo',
         ];

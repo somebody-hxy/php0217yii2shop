@@ -20,7 +20,7 @@ return [
         ],
         'user' => [
 //            'identityClass' => 'common\models\User',
-            'identityClass' => 'backend\models\Admin',
+            'identityClass' => backend\models\Admin::className(),
             'enableAutoLogin' => true,
             //'authTimeout'=>3600,
             'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],

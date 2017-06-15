@@ -12,7 +12,7 @@ class LoginForm extends Model{
     //验证码
     public $code;
     //记住登录
-    public $remember_me;
+    public $rememberMe;
 
     public function rules(){
         return [
@@ -20,6 +20,7 @@ class LoginForm extends Model{
             //validateUsername自定义的验证方法
             ['code','captcha','captchaAction'=>'admin/captcha'],
             ['username','validateUsername'],
+            ['rememberMe','boolean'],
         ];
     }
 
@@ -28,9 +29,11 @@ class LoginForm extends Model{
             'username'=>'用户名',
             'password_hash'=>'密码',
             'code'=>'验证码',
-            'remember_me'=>'记住密码',
+            'rememberMe'=>'记住我',
         ];
     }
+
+
     //自定义验证方法
     public function validateUsername(){
         $admin=Admin::findOne(['username'=>$this->username]);

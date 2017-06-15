@@ -15,7 +15,6 @@ class AdminController extends \yii\web\Controller
         if($model->load(\Yii::$app->request->post())){
             if($model->validate()){
                 //跳转
-
                 return $this->redirect(['admin/index']);
             }
         }
@@ -47,7 +46,7 @@ class AdminController extends \yii\web\Controller
             if($model->validate()){
                 //对密码进行加密
                 $model->password_hash=\Yii::$app->security->generatePasswordHash($model->password_hash);
-                $model->create_at=time();
+//                $model->create_at=time();
                 $model->save();
                 \Yii::$app->session->setFlash('success','添加管理员成功');
                 return $this->redirect(['admin/index']);

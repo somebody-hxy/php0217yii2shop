@@ -4,10 +4,12 @@ namespace backend\controllers;
 use backend\models\Goods;
 use backend\models\GoodsCategory;
 use backend\models\GoodsDayCount;
+use backend\models\GoodsImg;
 use backend\models\GoodsIntro;
 use xj\uploadify\UploadAction;
 use yii\data\Pagination;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 
 class GoodsController extends Controller{
 
@@ -124,7 +126,25 @@ class GoodsController extends Controller{
         $list=GoodsIntro::findOne(['goods_id'=>$id]);
         return $this->render('list',['list'=>$list,'goods'=>$goods]);
     }
+    //商品相册
+    public function actionGallery($id){
+        $goods=Goods::findOne(['id'=>$id]);
+        if($goods==null){
+            throw new NotFoundHttpException('商品不存在');
+        }
+        return $this->render('gallery',['goods'=>$goods]);
+    }
+    //ajax删除图片
+    public function actionDelGallery(){
+        $id = \Yii::$app->request->post('id');
+        $model = GoodsImg::findOne(['id'=>$id]);
+        if($model && $model->delete()){
+            return 'success';
+        }else{
+            return 'fail';
+        }
 
+    }
     //uploadify的配置
     public function actions() {
         return [
@@ -164,10 +184,15 @@ class GoodsController extends Controller{
                 'afterValidate' => function (UploadAction $action) {},
                 'beforeSave' => function (UploadAction $action) {},
                 'afterSave' => function (UploadAction $action) {
-                    $action->output['fileUrl'] = $action->getWebUrl();
-                    $action->getFilename(); // "image/yyyymmddtimerand.jpg"
-                    $action->getWebUrl(); //  "baseUrl + filename, /upload/image/yyyymmddtimerand.jpg"
-                    $action->getSavePath(); // "/var/www/htdocs/upload/image/yyyymmddtimerand.jpg"
+                    $model = new GoodsImg();
+                    $model->goods_id = \Yii::$app->request->post('goods_id');
+                    $model->goods_logo = $action->getWebUrl();
+                    $model->save();
+                    $action->output['fileUrl'] = $model->goods_logo;
+//                    $action->output['fileUrl'] = $action->getWebUrl();
+//                    $action->getFilename(); // "image/yyyymmddtimerand.jpg"
+//                    $action->getWebUrl(); //  "baseUrl + filename, /upload/image/yyyymmddtimerand.jpg"
+//                    $action->getSavePath(); // "/var/www/htdocs/upload/image/yyyymmddtimerand.jpg"
                 },
             ],
         ];

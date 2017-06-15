@@ -63,6 +63,14 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
         ];
     }
 
+    public function beforeSave($insert){
+        if($insert){
+            $this->create_at=time();
+            $this->status=1;
+            //生成随机字符串
+            $this->auth_key=Yii::$app->security;
+        }
+    }
     /**
      * Finds an identity by the given ID.
      * @param string|int $id the ID to be looked for
@@ -114,7 +122,7 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function getAuthKey()
     {
-        // TODO: Implement getAuthKey() method.
+        return $this->auth_key;
     }
 
     /**
@@ -127,6 +135,6 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function validateAuthKey($authKey)
     {
-        // TODO: Implement validateAuthKey() method.
+        return $this->getAuthKey()==$authKey;
     }
 }

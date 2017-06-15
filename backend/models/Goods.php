@@ -34,12 +34,18 @@ class Goods extends \yii\db\ActiveRecord
     {
         return 'goods';
     }
-
+    //商品和商品分类关系 1对1
     public function getGoodsCategory(){
         return $this->hasOne(GoodsCategory::className(),['id'=>'goods_category_id']);
     }
+    //商品和品牌关系 1对1
     public function getBrand(){
         return $this->hasOne(Brand::className(),['id'=>'brand_id']);
+    }
+    //商品和相册关系 1对多
+    public function getImgs()
+    {
+        return $this->hasMany(GoodsImg::className(),['goods_id'=>'id']);
     }
     //查询所有的商品分类
     public static function getCategoryOptions()

@@ -11,7 +11,7 @@ class LoginForm extends Model{
     public $password_hash;
     //验证码
     public $code;
-    //记住登录
+    //记住我
     public $rememberMe;
 
     public function rules(){
@@ -41,9 +41,8 @@ class LoginForm extends Model{
             //用户存在验证密码
             if(\Yii::$app->security->validatePassword($this->password_hash,$admin->password_hash)){
                 //账号密码正确就登录
-                \Yii::$app->user->login($admin);
-//                \Yii::$app->user->identity->last_login_time=time();
-//                \Yii::$app->user->identity->last_login_ip=$_SERVER["REMOTE_ADDR"];
+                $duration = $this->rememberMe?7*24*3600:0;
+                \Yii::$app->user->login($admin,$duration);
                 $admin->last_login_time=time();
                 $admin->last_login_ip=$_SERVER["REMOTE_ADDR"];
                 $admin->save(false);

@@ -33,19 +33,14 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
             [['username', 'password_hash','email'], 'required'],
             [['status'], 'integer'],
             ['username', 'unique','message' => '用户名已存在'],
+            [['auth_key'], 'string', 'max' => 32],
             [['username'], 'string', 'max' => 30],
             [['password_hash'], 'string', 'max' => 100],
-            [['email'],'match','pattern'=>'/^\w+([-.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/','message'=>'邮箱格式不正确'],
+            [['last_login_ip'], 'string', 'max' => 50],
+//            [['email'],'match','pattern'=>'/^\w+([-.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/','message'=>'邮箱格式不正确'],
             ['email', 'unique', 'message' => '邮箱名已存在'],
-//            [['email'],'match','pattern'=>'/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/ ','message'=>'邮箱格式不正确'],
-            //验证用户名的唯一性
-           /** ['username', 'filter', 'filter' => 'trim'],
-            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => '用户名已存在.'],
-            //验证邮箱的唯一性
-            ['email', 'filter', 'filter' => 'trim'],
-            ['email', 'email'],
-            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => '邮箱名已存在.'],
-            */
+            [['email'],'email'],
+            [['password_reset_token'], 'unique'],
         ];
     }
 
@@ -57,9 +52,15 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             'id' => 'ID',
             'username' => '用户名',
+            'auth_key' => 'Auth Key',
             'password_hash' => '密码',
+            'password_reset_token' => 'Password Reset Token',
             'email' => '邮箱',
             'status' => '状态',
+            'create_at' => '添加时间',
+            'updated_at' => '更新时间',
+            'last_login_time' => '最后登录时间',
+            'last_login_ip' => '最后登录ip',
         ];
     }
 
@@ -68,8 +69,9 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
             $this->create_at=time();
             $this->status=1;
             //生成随机字符串
-            $this->auth_key=Yii::$app->security;
+            $this->auth_key=Yii::$app->security->generateRandomString();
         }
+        return parent::beforeSave($insert);
     }
     /**
      * Finds an identity by the given ID.

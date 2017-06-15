@@ -6,6 +6,7 @@ use backend\models\Admin;
 use backend\models\LoginForm;
 use yii\data\Pagination;
 use yii\filters\AccessControl;
+use yii\web\NotFoundHttpException;
 
 class AdminController extends \yii\web\Controller
 {
@@ -14,6 +15,7 @@ class AdminController extends \yii\web\Controller
         $model=new LoginForm();
         if($model->load(\Yii::$app->request->post())){
             if($model->validate()){
+                \Yii::$app->session->setFlash('success','登录成功');
                 //跳转
                 return $this->redirect(['admin/index']);
             }
@@ -58,6 +60,9 @@ class AdminController extends \yii\web\Controller
     public function actionEdit($id)
     {
         $model=Admin::findOne(['id'=>$id]);
+        if($model==null){
+            throw new NotFoundHttpException('账号不存在');
+        }
         if($model->load(\Yii::$app->request->post())){
             if($model->validate()){
                 //对密码进行加密

@@ -7,8 +7,8 @@ use backend\models\ArticleCategory;
 use backend\models\ArticleDetail;
 use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
-
-class ArticleController extends \yii\web\Controller
+use yii\web\Controller;
+class ArticleController extends BackendController
 {
     public function actionIndex()
     {

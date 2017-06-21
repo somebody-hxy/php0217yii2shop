@@ -7,7 +7,7 @@ use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 
-class GoodsCategoryController extends \yii\web\Controller
+class GoodsCategoryController extends BackendController
 {
     public function actionIndex()
     {

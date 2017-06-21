@@ -18,8 +18,14 @@
                 <td><?=$cate_list->sort?></td>
                 <td><?=($cate_list->status)?'正常':'隐藏'?></td>
                 <td><?=($cate_list->is_help)?'是':'否'?></td>
-                <td><?=\yii\bootstrap\Html::a('修改',['article-category/edit','id'=>$cate_list->id],['class'=>'btn btn-warning btn-xs'])?>
-                    <?=\yii\bootstrap\Html::a('删除',['article-category/del','id'=>$cate_list->id],['class'=>'btn btn-danger btn-xs'])?>
+                <td><?php
+                    if(Yii::$app->user->can('article-category/edit')){
+                        echo \yii\bootstrap\Html::a('修改',['article-category/edit','id'=>$cate_list->id],['class'=>'btn btn-warning btn-xs']);
+                    }?>
+                    <?php
+                    if(Yii::$app->user->can('article-category/del')){
+                        echo \yii\bootstrap\Html::a('删除',['article-category/del','id'=>$cate_list->id],['class'=>'btn btn-danger btn-xs']);
+                    }?>
                 </td>
             </tr>
         <?php }?>

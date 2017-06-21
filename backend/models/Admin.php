@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
 
 /**
@@ -16,6 +17,8 @@ use yii\web\IdentityInterface;
 class Admin extends \yii\db\ActiveRecord implements IdentityInterface
 {
     public static $status_options = [1=>'启用',0=>'禁用'];
+    public $roles=[];//用户角色
+    const SCENARIO_ADD = 'add';
     /**
      * @inheritdoc
      */
@@ -30,7 +33,8 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'password_hash','email'], 'required'],
+            [['username','email'], 'required'],
+            ['password_hash','required','on'=>self::SCENARIO_ADD],
             [['status'], 'integer'],
             ['username', 'unique','message' => '用户名已存在'],
             [['auth_key'], 'string', 'max' => 32],
@@ -40,6 +44,7 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
 //            [['email'],'match','pattern'=>'/^\w+([-.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/','message'=>'邮箱格式不正确'],
             ['email', 'unique', 'message' => '邮箱名已存在'],
             [['email'],'email'],
+            [['roles'], 'safe'],
             [['password_reset_token'], 'unique'],
         ];
     }
@@ -61,9 +66,38 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
             'updated_at' => '更新时间',
             'last_login_time' => '最后登录时间',
             'last_login_ip' => '最后登录ip',
+            'roles'=>'角色',
         ];
     }
+    public function addRole($arr,$id)
+    {
+        $authManager = Yii::$app->authManager;
+        foreach($arr as $v){
+            if($authManager->getRole($v)){
+                $authManager->assign($authManager->getRole($v),$id);
+            }
+        }
+        return true;
+    }
 
+    public function updateRole($arr,$id)
+    {
+        $auth = Yii::$app->authManager;
+        $auth->revokeAll($id);
+        foreach($arr as $v){
+            if($auth->getRole($v)){
+                $auth->assign($auth->getRole($v),$id);
+            }
+        }
+        return true;
+    }
+
+    public function loadData($role)
+    {
+        foreach ($role as $key=>$v){
+            $this->roles[$key]=$key;
+        }
+    }
     public function beforeSave($insert){
         if($insert){
             $this->create_at=time();
@@ -71,6 +105,15 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
             //生成随机字符串
             $this->auth_key=Yii::$app->security->generateRandomString();
         }
+        //给用户关联角色
+//        if($this->roles){
+//            $authManager = Yii::$app->authManager;
+//            $authManager->revokeAll($this->id);
+//            foreach ($this->roles as $roleName){
+//                $role = $authManager->getRole($roleName);
+//                if($role) $authManager->assign($role,$this->id);
+//            }
+//        }
         return parent::beforeSave($insert);
     }
     /**

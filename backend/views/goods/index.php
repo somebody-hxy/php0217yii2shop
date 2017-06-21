@@ -6,7 +6,7 @@ $form=\yii\bootstrap\ActiveForm::begin([
 ]);
 echo'<div style="text-align: right;height:45px;">';
     echo  \yii\bootstrap\Html::textInput('name');
-    echo  ' '.\yii\bootstrap\Html::textInput('sn');
+//    echo  ' '.\yii\bootstrap\Html::textInput('sn');
     echo \yii\bootstrap\Html::submitButton('搜索',['class'=>'btn btn-primary btn-xs']);
 \yii\bootstrap\ActiveForm::end();
 echo'</div>';
@@ -54,10 +54,22 @@ echo'</div>';
                     <td><?=\backend\models\Goods::$status_options[$goods_list->status]?></td>
 
                     <td><?=date('Y-m-d H:i:s',$goods_list->create_time)?></td>
-                    <td><?=\yii\bootstrap\Html::a('修改',['goods/edit','id'=>$goods_list->id],['class'=>'btn btn-warning btn-xs'])?>
-                        <?=\yii\bootstrap\Html::a('商品详情',['goods/list','id'=>$goods_list->id],['class'=>'btn btn-success btn-xs'])?>
-                        <?=\yii\bootstrap\Html::a('相册',['goods/gallery','id'=>$goods_list->id],['class'=>'btn btn-info btn-xs'])?>
-                        <?=\yii\bootstrap\Html::a('删除',['goods/del','id'=>$goods_list->id],['class'=>'btn btn-danger btn-xs'])?>
+                    <td><?php
+                        if(Yii::$app->user->can('goods/edit')){
+                           echo  \yii\bootstrap\Html::a('修改',['goods/edit','id'=>$goods_list->id],['class'=>'btn btn-warning btn-xs']);
+                        }?>
+                        <?php
+                        if(Yii::$app->user->can('goods/list')){
+                            echo \yii\bootstrap\Html::a('商品详情',['goods/list','id'=>$goods_list->id],['class'=>'btn btn-success btn-xs']);
+                        }?>
+                        <?php
+                        if(Yii::$app->user->can('goods/gallery')){
+                            echo \yii\bootstrap\Html::a('相册',['goods/gallery','id'=>$goods_list->id],['class'=>'btn btn-info btn-xs']);
+                        }?>
+                        <?php
+                            if(Yii::$app->user->can('goods/del')){
+                            echo \yii\bootstrap\Html::a('删除',['goods/del','id'=>$goods_list->id],['class'=>'btn btn-danger btn-xs']);
+                        }?>
                     </td>
                 </tr>
             <?php }?>

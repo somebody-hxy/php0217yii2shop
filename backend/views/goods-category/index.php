@@ -14,8 +14,16 @@
                 <td><?=$cate_list->id?></td>
                 <td><?=$cate_list->name?></td>
                 <td><?=$cate_list->intro?></td>
-                <td><?=\yii\bootstrap\Html::a('修改',['goods-category/edit','id'=>$cate_list->id],['class'=>'btn btn-warning btn-xs'])?>
-                    <?=\yii\bootstrap\Html::a('删除',['goods-category/del','id'=>$cate_list->id],['class'=>'btn btn-danger btn-xs'])?>
+                <td><?php
+                    if(Yii::$app->user->can('goods-category/edit')){
+                        echo \yii\bootstrap\Html::a('修改',['goods-category/edit','id'=>$cate_list->id],['class'=>'btn btn-warning btn-xs']);
+                    }
+                    ?>
+
+                    <?php
+                    if(Yii::$app->user->can('goods-category/del')){
+                        echo \yii\bootstrap\Html::a('删除',['goods-category/del','id'=>$cate_list->id],['class'=>'btn btn-danger btn-xs']);
+                    }?>
                 </td>
             </tr>
         <?php endforeach;?>

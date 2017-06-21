@@ -16,6 +16,7 @@ use Yii;
  */
 class ArticleCategory extends \yii\db\ActiveRecord
 {
+    public static $status_options = [1=>'正常',0=>'隐藏'];
     /**
      * @inheritdoc
      */

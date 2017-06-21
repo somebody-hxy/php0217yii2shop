@@ -8,7 +8,7 @@ use yii\web\Controller;
 use yii\web\UploadedFile;
 use xj\uploadify\UploadAction;
 use crazyfd\qiniu\Qiniu;
-class BrandController extends Controller{
+class BrandController extends BackendController{
 
     public function actionIndex(){
         $query=Brand::find();
@@ -121,6 +121,7 @@ class BrandController extends Controller{
                 'afterSave' => function (UploadAction $action) {
                     //七牛云配置
                     $imgUrl=$action->getWebUrl();//图片地址
+                    //$imgUrl=$action->getSavePath();//图片地址
 
                     $ak = 'Z7cY0sCYJmwk1Mn5cobYajEhojrhaX9EWLrdwHKo';
                     $sk = 'ZZVZyqVMOwfmpH3hY_JFYKK6RF1FHu1Kb9IAxWs2';
@@ -129,10 +130,10 @@ class BrandController extends Controller{
 
                     $qiniu = new Qiniu($ak, $sk,$domain, $bucket);
                     //要上传的文件
-                    $fileName=\Yii::getAlias('@webroot').$imgUrl;
+                    //$fileName=\Yii::getAlias('@webroot').$imgUrl;
                     $key = $imgUrl;
                     //上传文件
-                    $re=$qiniu->uploadFile($fileName,$key);
+                    $qiniu->uploadFile($action->getSavePath(),$key);
                     //var_dump($re);
                     //从七牛云上获取图片地址
                     $url = $qiniu->getLink($key);

@@ -22,8 +22,15 @@
                 <td><?=$brand_info->intro?></td>
                 <td><?=$brand_info->sort?></td>
                 <td><?=($brand_info->status)?'正常':'隐藏'?></td>
-                <td><?=\yii\bootstrap\Html::a('修改',['brand/edit','id'=>$brand_info->id],['class'=>'btn btn-warning btn-xs'])?>
-                    <?=\yii\bootstrap\Html::a('删除',['brand/del','id'=>$brand_info->id],['class'=>'btn btn-danger btn-xs'])?>
+                <td><?php
+                    if(Yii::$app->user->can('brand/edit')){
+                    echo \yii\bootstrap\Html::a('修改',['brand/edit','id'=>$brand_info->id],['class'=>'btn btn-warning btn-xs']);
+                    }?>
+                    <?php
+                    if(Yii::$app->user->can('brand/del')){
+                    echo \yii\bootstrap\Html::a('删除',['brand/del','id'=>$brand_info->id],['class'=>'btn btn-danger btn-xs']);
+                    }
+                    ?>
                 </td>
             </tr>
         <?php };?>

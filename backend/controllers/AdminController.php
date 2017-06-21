@@ -7,9 +7,18 @@ use backend\models\LoginForm;
 use yii\data\Pagination;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
-
+use backend\components\RbacFilter;
 class AdminController extends \yii\web\Controller
 {
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'only'=>['add','index'],
+            ]
+        ];
+    }
     //登录
     public function actionLogin(){
         $model=new LoginForm();
@@ -43,13 +52,14 @@ class AdminController extends \yii\web\Controller
     //添加数据
     public function actionAdd()
     {
-		$model=new Admin();
+		$model=new Admin(['scenario'=>Admin::SCENARIO_ADD]);
         if($model->load(\Yii::$app->request->post())){
             if($model->validate()){
                 //对密码进行加密
                 $model->password_hash=\Yii::$app->security->generatePasswordHash($model->password_hash);
 //                $model->create_at=time();
                 $model->save();
+                $model->addRole($model->roles,$model->id);
                 \Yii::$app->session->setFlash('success','添加管理员成功');
                 return $this->redirect(['admin/index']);
             }
@@ -59,7 +69,9 @@ class AdminController extends \yii\web\Controller
     //修改数据
     public function actionEdit($id)
     {
+        $role=\Yii::$app->authManager->getRolesByUser($id);
         $model=Admin::findOne(['id'=>$id]);
+        $model->loadData($role);
         if($model==null){
             throw new NotFoundHttpException('账号不存在');
         }
@@ -69,6 +81,7 @@ class AdminController extends \yii\web\Controller
                 $model->password_hash=\Yii::$app->security->generatePasswordHash($model->password_hash);
                 $model->updated_at=time();
                 $model->save();
+                $model->updateRole($model->roles,$id);
                 \Yii::$app->session->setFlash('success','修改成功');
                 return $this->redirect(['admin/index']);
             }

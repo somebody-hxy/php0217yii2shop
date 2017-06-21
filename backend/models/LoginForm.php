@@ -44,7 +44,8 @@ class LoginForm extends Model{
                 $duration = $this->rememberMe?7*24*3600:0;
                 \Yii::$app->user->login($admin,$duration);
                 $admin->last_login_time=time();
-                $admin->last_login_ip=$_SERVER["REMOTE_ADDR"];
+//                $admin->last_login_ip=$_SERVER["REMOTE_ADDR"];
+                $admin->last_login_ip=\Yii::$app->request->getUserIP();
                 $admin->save(false);
             }else{
                 $this->addError('password_hash','密码不正确');

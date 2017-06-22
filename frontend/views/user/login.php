@@ -1,4 +1,3 @@
-
 <!-- 登录主体部分start -->
 <div class="login w990 bc mt10">
     <div class="login_hd">
@@ -23,8 +22,9 @@
             echo $form->field($model,'username')->textInput(['class'=>'txt']);
             echo $form->field($model,'password')->passwordInput(['class'=>'txt']);
             echo $form->field($model,'code',['options'=>['class'=>'checkcode']])->widget(\yii\captcha\Captcha::className(),['template'=>'{input}{image}']);
-            echo $form->field($model,'rememberMe')->checkbox();
-//            echo $form->field($model,'rememberMe')->checkbox().'<lable style="width:60px;height:32px;background:red;display:block;"></lable>';
+            //echo $form->field($model,'rememberMe')->checkbox();
+            echo '<label for="">&nbsp;</label>'.$form->field($model,'rememberMe')->checkbox();
+            echo '<br/>';
             echo '<li>
                         <label for="">&nbsp;</label>
                         <input type="submit" value="" class="login_btn">

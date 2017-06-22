@@ -1,5 +1,3 @@
-
-
 <!-- 登录主体部分start -->
 <div class="login w990 bc mt10 regist">
     <div class="login_hd">
@@ -27,8 +25,11 @@
             echo $form->field($model,'email')->textInput(['class'=>'txt']);
             echo $form->field($model,'tel')->textInput(['class'=>'txt']);
             echo $form->field($model,'code',['options'=>['class'=>'checkcode']])->widget(\yii\captcha\Captcha::className(),['template'=>'{input}{image}']);
-            echo $form->field($model,'agree')->checkbox();
-
+//            echo $form->field($model,'agree')->checkbox();
+            echo '<label for="">&nbsp;</label>'.$form->field($model,'agree')->checkbox();
+            echo '<br/>';
+            echo '<br/>';
+            echo '<br/>';
             echo '<li>
                         <label for="">&nbsp;</label>
                         <input type="submit" value="" class="login_btn">

@@ -11,7 +11,8 @@ use yii\data\Pagination;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
-class GoodsController extends BackendController{
+//class GoodsController extends BackendController{
+class GoodsController extends Controller{
 
     public function actionIndex(){
         $key=isset($_GET['key'])? $_GET['key']: '';

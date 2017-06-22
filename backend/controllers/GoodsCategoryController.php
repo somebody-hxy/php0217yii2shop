@@ -15,7 +15,7 @@ class GoodsCategoryController extends BackendController
         $total=$query->count();
         $page= new Pagination([
             'totalCount'=>$total,
-            'pageSize'=>3
+            'pageSize'=>9,
         ]);
         $model=$query->limit($page->limit)->offset($page->offset)->all();
         return $this->render('index',['model'=>$model,'page'=>$page]);

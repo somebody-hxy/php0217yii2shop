@@ -8,7 +8,8 @@ use yii\web\Controller;
 use yii\web\UploadedFile;
 use xj\uploadify\UploadAction;
 use crazyfd\qiniu\Qiniu;
-class BrandController extends BackendController{
+//class BrandController extends BackendController{
+class BrandController extends Controller{
 
     public function actionIndex(){
         $query=Brand::find();

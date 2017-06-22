@@ -16,7 +16,7 @@ class MenuWidget extends Widget{
     //widget被调用时，需要执行的代码
     public function run(){
         NavBar::begin([
-            'brandLabel' => 'Somebody Admin Manager',
+            'brandLabel' => 'Somebody',
             'brandUrl' => Yii::$app->homeUrl,
             'options' => [
                 'class' => 'navbar-inverse navbar-fixed-top',

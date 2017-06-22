@@ -19,7 +19,7 @@ class UserController extends \yii\web\Controller
                 return $this->redirect(['user/login']);
             }
         }
-        var_dump($model->getErrors());
+        //var_dump($model->getErrors());
         return $this->render('register',['model'=>$model]);
     }
     //登录
@@ -27,7 +27,7 @@ class UserController extends \yii\web\Controller
         $model=new LoginForm();
         if($model->load(\Yii::$app->request->post()) && $model->validate()){
             \Yii::$app->session->setFlash('success','登录成功');
-            return $this->redirect(['user/index']);
+            return $this->redirect(['address/index']);
         }
         return $this->render('login',['model'=>$model]);
     }
@@ -40,6 +40,7 @@ class UserController extends \yii\web\Controller
 
     public function actionIndex()
     {
+
         return $this->render('index');
     }
 

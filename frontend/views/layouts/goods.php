@@ -6,7 +6,7 @@
 use yii\helpers\Html;
 
 //加载静态资源管理器，注册静态资源到当前布局文件
-\frontend\assets\AddressAsset::register($this);
+\frontend\assets\GoodsAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -27,7 +27,7 @@ use yii\helpers\Html;
         </div>
         <div class="topnav_right fr">
             <ul>
-                <li>您好， 欢迎来到京西！
+                <li>您好，欢迎来到京西！
                     <?php if(Yii::$app->user->isGuest):?>
                         [<?=Html::a('登录',['user/login'])?>]
                         [<?=Html::a('免费注册',['user/register'])?>]
@@ -45,9 +45,11 @@ use yii\helpers\Html;
         </div>
     </div>
 </div>
+<!-- 顶部导航 end -->
+<div style="clear:both;"></div>
+
 
     <?= $content ?>
-
 
 
 <div style="clear:both;"></div>

@@ -3,6 +3,7 @@ namespace frontend\controllers;
 
 use backend\models\Goods;
 use backend\models\GoodsCategory;
+use backend\models\GoodsImg;
 use yii\web\Controller;
 
 class IndexController extends Controller{
@@ -29,8 +30,8 @@ class IndexController extends Controller{
         $this->layout='goods';
         $goodscategory=GoodsCategory::findAll(['parent_id'=>0]);
         $goods1=Goods::findOne(['id'=>$cate_id]);
-        //var_dump($goods1);exit;
-        return $this->render('goods',['goodscategory'=>$goodscategory,'goods1'=>$goods1]);
+        $imgs=GoodsImg::findAll(['goods_id'=>$cate_id]);
+        return $this->render('goods',['goodscategory'=>$goodscategory,'goods1'=>$goods1,'imgs'=>$imgs]);
     }
 
 }

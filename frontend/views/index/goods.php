@@ -79,7 +79,7 @@ use \yii\helpers\Html;
         <div class="cart fl">
             <dl>
                 <dt>
-                    <a href="">去购物车结算</a>
+                    <?=Html::a('去购物车结算',['cart/flow1'])?>
                     <b></b>
                 </dt>
                 <dd>
@@ -100,24 +100,19 @@ use \yii\helpers\Html;
         <!--  商品分类部分 start-->
         <div class="category fl cat1">
             <div class="cat_hd off">  <!-- 注意，首页在此div上只需要添加cat_hd类，非首页，默认收缩分类时添加上off类，并将cat_bd设置为不显示(加上类none即可)，鼠标滑过时展开菜单则将off类换成on类 -->
-                <h2>全部商品分类</h2>
-                <em></em>
+                <h2>全部商品分类</h2><em></em>
             </div>
-
             <div class="cat_bd none">
                 <?php foreach($goodscategory as $k=>$category):?>
                     <div class="cat <?=$k==0?"item1":""?>">
-                        <h3><?=\yii\helpers\Html::a($category->name,['index/list','cate_id'=>$category->id])?>
-                            <b></b>
+                        <h3><?=\yii\helpers\Html::a($category->name,['index/list','cate_id'=>$category->id])?><b></b>
                         </h3>
                         <div class="cat_detail">
                             <?php foreach($category->children as $k2=>$value):?>
                                 <dl <?=$k2==0?'class="dl_1st"':''?>>
                                     <dt><?=\yii\helpers\Html::a($value->name,['index/list','cate_id'=>$value->id])?></dt>
                                     <?php foreach($value->children as $v):?>
-                                        <dd>
-                                            <?=\yii\helpers\Html::a($v->name,['index/list','cate_id'=>$v->id])?>
-                                        </dd>
+                                        <dd><?=\yii\helpers\Html::a($v->name,['index/list','cate_id'=>$v->id])?></dd>
                                     <?php endforeach;?>
                                 </dl>
                             <?php endforeach;?>
@@ -263,7 +258,7 @@ use \yii\helpers\Html;
     <div class="preview fl">
         <div class="midpic">
             <a href="images/preview_l1.jpg" class="jqzoom" rel="gal1">   <!-- 第一幅图片的大图 class 和 rel属性不能更改 -->
-                <?=Html::img('http://admin.yii2shop.com'.$goods1->logo,['width'=>200])?>              <!-- 第一幅图片的中图 -->
+                <?=Html::img('http://admin.yii2shop.com'.$goods1->logo,['width'=>350])?>              <!-- 第一幅图片的中图 -->
             </a>
         </div>
 
@@ -338,13 +333,13 @@ use \yii\helpers\Html;
         <ul>
             <li><span>商品编号： </span><?=$goods1->sn?></li>
             <li class="market_price"><span>定价：</span><em>￥<?=$goods1->market_price?></em></li>
-            <li class="shop_price"><span>本店价：</span> <strong>￥<?=$goods1->shop_price?></strong> <a href="">(降价通知)</a></li>
+            <li class="shop_price"><span>本店价：</span> <strong>￥<?=$goods1->shop_price?></strong>
+                <a href="">(降价通知)</a></li>
             <li><span>上架时间：</span><?=date('Y-m-d',$goods1->create_time)?></li>
             <li class="star"><span>商品评分：</span> <strong></strong><a href="">(已有21人评价)</a></li> <!-- 此处的星级切换css即可 默认为5星 star4 表示4星 star3 表示3星 star2表示2星 star1表示1星 -->
         </ul>
-        <form action="" method="post" class="choose">
+        <form action="<?=\yii\helpers\Url::to(['cart/add'])?>" method="post" class="choose">
             <ul>
-
                 <li>
                     <dl>
                         <dt>购买数量：</dt>
@@ -361,6 +356,8 @@ use \yii\helpers\Html;
                         <dt>&nbsp;</dt>
                         <dd>
                             <input type="submit" value="" class="add_btn" />
+                            <input type="hidden" name="goods_id" value="<?=$goods1->id?>">
+                            <input name="_csrf-frontend" type="hidden" id="_csrf-frontend" value="<?= Yii::$app->request->csrfToken ?>">
                         </dd>
                     </dl>
                 </li>
@@ -390,39 +387,27 @@ use \yii\helpers\Html;
 <div class="introduce detail_div none">
     <div class="attr mt15">
         <ul>
-            <li><span>商品名称：</span>ThinkPadX230(2306 3T4）</li>
-            <li><span>商品编号：</span>979631</li>
-            <li><span>品牌：</span>联想（Thinkpad）</li>
-            <li><span>上架时间：</span>2013-09-18 17:58:12</li>
-            <li><span>商品毛重：</span>2.47kg</li>
-            <li><span>商品产地：</span>中国大陆</li>
-            <li><span>显卡：</span>集成显卡</li>
-            <li><span>触控：</span>非触控</li>
-            <li><span>厚度：</span>正常厚度（>25mm）</li>
-            <li><span>处理器：</span>Intel i5</li>
-            <li><span>尺寸：</span>12英寸</li>
+            <li><span>商品名称：</span><?=$goods1->name?></li>
+            <li><span>商品编号：</span><?=$goods1->sn?></li>
+            <li><span>品牌：</span><?=$goods1->brand->name?></li>
+            <li><span>上架时间：</span><?=date('Y-m-d',$goods1->create_time)?></li>
+<!--            <li><span>商品毛重：</span>2.47kg</li>-->
+<!--            <li><span>商品产地：</span>中国大陆</li>-->
+<!--            <li><span>显卡：</span>集成显卡</li>-->
+<!--            <li><span>触控：</span>非触控</li>-->
+<!--            <li><span>厚度：</span>正常厚度（>25mm）</li>-->
+<!--            <li><span>处理器：</span>Intel i5</li>-->
+<!--            <li><span>尺寸：</span>12英寸</li>-->
         </ul>
     </div>
 
     <div class="desc mt10">
         <!-- 此处的内容 一般是通过在线编辑器添加保存到数据库，然后直接从数据库中读出 -->
-        <?=Html::img('@web/images/desc1.jpg')?>
+        <?php foreach($imgs as $img):?>
+        <?=Html::img('http://admin.yii2shop.com'.$img->goods_logo,['width'=>800])?>
         <p style="height:10px;"></p>
-        <?=Html::img('@web/images/desc2.jpg')?>
-        <p style="height:10px;"></p>
-        <?=Html::img('@web/images/desc3.jpg')?>
-        <p style="height:10px;"></p>
-        <?=Html::img('@web/images/desc4.jpg')?>
-        <p style="height:10px;"></p>
-        <?=Html::img('@web/images/desc5.jpg')?>
-        <p style="height:10px;"></p>
-        <?=Html::img('@web/images/desc6.jpg')?>
-        <p style="height:10px;"></p>
-        <?=Html::img('@web/images/desc7.jpg')?>
-        <p style="height:10px;"></p>
-        <?=Html::img('@web/images/desc8.jpg')?>
-        <p style="height:10px;"></p>
-        <?=Html::img('@web/images/desc9.jpg')?>
+        <?php endforeach;?>
+
     </div>
 </div>
 <!-- 商品介绍 end -->

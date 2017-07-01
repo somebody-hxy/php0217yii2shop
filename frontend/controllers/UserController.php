@@ -12,7 +12,7 @@ class UserController extends \yii\web\Controller
     public $layout = 'login';
     //注册
     public function actionRegister(){
-        $model=new Member();
+        $model=new Member(['scenario'=>Member::SCENARIO_REGISTER]);
         if($model->load(\Yii::$app->request->post())){
             if($model->validate()){
                 $model->password_hash = \Yii::$app->security->generatePasswordHash($model->password);
@@ -47,26 +47,37 @@ class UserController extends \yii\web\Controller
         return $this->render('index');
     }
 
-    public function actionTest(){
+    public function actionSendSms(){
         // 配置信息
         $config = [
             'app_key'    => '24480028',
             'app_secret' => '4bfb70608b2cc23025a1b37f1aa84a68',
             // 'sandbox'    => true,  // 是否为沙箱环境，默认false
         ];
-
-
 // 使用方法一
         $client = new Client(new App($config));
         $req    = new AlibabaAliqinFcSmsNumSend;
+        //确保上一次发送短信间隔超过1分钟
+        $tel = \Yii::$app->request->post('tel');
+        if(!preg_match('/^1[34578]\d{9}$/',$tel)){
+            echo '电话号码不正确';exit;
+        }
         $code=rand(100000, 999999);
-        $req->setRecNum('13312311231')
-            ->setSmsParam([
-                'code' => $code
-            ])
+        $req->setRecNum($tel)->setSmsParam(['code'=>$code])
             ->setSmsFreeSignName('短信验证码')
             ->setSmsTemplateCode('SMS_71835215');
-
+/**
+        $result = 1;
+        if($result){
+            //保存当前验证码 session  mysql  redis  不能保存到cookie
+//            \Yii::$app->session->set('code',$code);
+//            \Yii::$app->session->set('tel_'.$tel,$code);
+            \Yii::$app->cache->set('tel_'.$tel,$code,5*60);
+            echo 'success'.$code;
+        }else{
+            echo '发送失败';
+        }
+*/
         $resp = $client->execute($req);
         var_dump($resp);
         var_dump($code);

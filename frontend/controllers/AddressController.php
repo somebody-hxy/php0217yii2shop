@@ -35,6 +35,7 @@ class AddressController extends \yii\web\Controller
         $model=Address::findOne(['id'=>$id]);
         $member_id=\Yii::$app->user->id;
         $models=Address::find()->all();
+        $goodscategory=GoodsCategory::findAll(['parent_id'=>0]);
         if($model->load(\Yii::$app->request->post()) && $model->validate()){
             if($model->is_default_address){
                 foreach ($models as $v){
@@ -47,7 +48,7 @@ class AddressController extends \yii\web\Controller
             \Yii::$app->session->setFlash('success','修改收货地址成功');
             return $this->redirect('index.html');
         }
-        return $this->render('index',['model'=>$model,'models'=>$models]);
+        return $this->render('index',['model'=>$model,'models'=>$models,'goodscategory'=>$goodscategory]);
     }
     //删除数据
     public function actionDel($id){

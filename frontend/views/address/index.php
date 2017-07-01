@@ -83,7 +83,8 @@ use yii\helpers\Html;
     <div class="cart fl">
         <dl>
             <dt>
-                <a href="">去购物车结算</a>
+<!--                <a href=""></a>-->
+                <?=Html::a('去购物车结算',['cart/flow1'])?>
                 <b></b>
             </dt>
             <dd>
@@ -193,23 +194,23 @@ use yii\helpers\Html;
 <div class="content fl ml10">
     <div class="address_hd" >
          <h3>收货地址薄</h3>
-<!--        <dl>-->
-<!--            <dt>1.许坤 北京市 昌平区 仙人跳区 仙人跳大街 17002810530 </dt>-->
-<!--            <dd>-->
-<!--                <a href="">修改</a>-->
-<!--                <a href="">删除</a>-->
-<!--                <a href="">设为默认地址</a>-->
-<!--            </dd>-->
-<!--        </dl>-->
+    <!--    <dl>
+            <dt>1.许坤 北京市 昌平区 仙人跳区 仙人跳大街 17002810530 </dt>
+            <dd>
+                <a href="">修改</a>
+                <a href="">删除</a>
+                <a href="">设为默认地址</a>
+            </dd>
+        </dl> -->
         <!-- 最后一个dl 加类last -->
-<!--          <dl class="last">-->
-<!--           <dt>2.许坤 四川省 成都市 高新区 仙人跳大街 17002810530 </dt>-->
-<!--            <dd>-->
-<!--                <a href="">修改</a>-->
-<!--                <a href="">删除</a>-->
-<!--                <a href="">设为默认地址</a>-->
-<!--            </dd>-->
-<!--        </dl>-->
+    <!--      <dl class="last">
+           <dt>2.许坤 四川省 成都市 高新区 仙人跳大街 17002810530 </dt>
+            <dd>
+                <a href="">修改</a>
+                <a href="">删除</a>
+                <a href="">设为默认地址</a>
+            </dd>
+        </dl>   -->
         <?php
         foreach($models as $model2):?>
             <dl>

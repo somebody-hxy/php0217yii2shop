@@ -81,7 +81,7 @@ use yii\helpers\Html;
     <div class="cart fl">
         <dl>
             <dt>
-                <a href="">去购物车结算</a>
+                <?=Html::a('去购物车结算',['cart/flow1'])?>
                 <b></b>
             </dt>
             <dd>

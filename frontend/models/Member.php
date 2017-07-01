@@ -26,7 +26,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     public $newpassword;//确认密码
     public $code;//验证码
     public $agree;//同意
-
+    public $smsCode;//短信验证码
     /**
      * @inheritdoc
      */
@@ -34,7 +34,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return 'member';
     }
-
+    const SCENARIO_REGISTER = 'register';
     /**
      * @inheritdoc
      */
@@ -52,9 +52,12 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['email'],'email'],
             ['email', 'unique', 'message' => '邮箱名已存在'],
             ['agree','boolean'],
-            ['newpassword','compare','compareAttribute'=>'password'],
-            [['newpassword','password'],'string','min'=>2],
-            ['code','captcha','captchaAction'=>'site/captcha'],
+//            ['newpassword','compare','compareAttribute'=>'password'],
+//            [['newpassword','password'],'string','min'=>2],
+//            ['code','captcha','captchaAction'=>'site/captcha'],
+            [['password','newpassword','smsCode'], 'required','on'=>self::SCENARIO_REGISTER],
+            [['newpassword'], 'compare','compareAttribute'=>'password','on'=>self::SCENARIO_REGISTER],
+            ['code','captcha','captchaAction'=>'site/captcha','on'=>self::SCENARIO_REGISTER],
         ];
     }
 
@@ -79,7 +82,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             'newpassword'=>'确认密码：',
             'code'=>'验证码：',
             'agree'=>'我已阅读并同意《用户注册协议》',
-
+            'smsCode'=>'验证码：',
         ];
     }
 /**
@@ -102,10 +105,12 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             $this->status = 1;
             //生成随机字符串
             $this->auth_key = Yii::$app->security->generateRandomString();
+        }else{
+            $this->updated_at = time();
         }
-//        if($this->password){
-//            $this->password_hash = Yii::$app->security->generatePasswordHash($this->password);
-//        }
+//      if($this->password){
+//         $this->password_hash = Yii::$app->security->generatePasswordHash($this->password);
+//      }
         return parent::beforeSave($insert);
     }
 

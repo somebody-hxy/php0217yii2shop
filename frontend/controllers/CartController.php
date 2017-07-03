@@ -96,7 +96,7 @@ class CartController extends \yii\web\Controller
         }
         return $this->redirect(['cart/flow1']);
     }
-    //购物车
+    //购物车页面
     public function actionFlow1()
     {
         if(\Yii::$app->user->isGuest) {

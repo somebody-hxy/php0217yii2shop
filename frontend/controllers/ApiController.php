@@ -1,6 +1,8 @@
 <?php
 namespace frontend\controllers;
 
+use yii\helpers\ArrayHelper;
+use yii\web\UploadedFile;
 use backend\models\Article;
 use backend\models\ArticleCategory;
 use backend\models\Goods;
@@ -13,7 +15,9 @@ use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\Cookie;
 use yii\web\Response;
-
+use Flc\Alidayu\Client;
+use Flc\Alidayu\App;
+use Flc\Alidayu\Requests\AlibabaAliqinFcSmsNumSend;
 class ApiController extends Controller{
 /**
     //测试
@@ -205,7 +209,7 @@ class ApiController extends Controller{
         $category_id=$request->get('category_id');
         $cate=GoodsCategory::findOne(['id'=>$category_id]);
         if($cate==null){
-            return['status'=>'11','msg'=>'该商品不存在'];
+            return['status'=>'-1','msg'=>'该商品不存在'];
         }
         $tree=$cate->tree;
         $lft=$cate->lft;
@@ -443,6 +447,7 @@ class ApiController extends Controller{
         $member_id=\Yii::$app->user->id;
         $request=\Yii::$app->request;
         $order=new Order();
+        $num=$request->post('total');
         if($request->isPost){
             $order->member_id=$member_id;
             $order->name=$request->post('name');
@@ -456,17 +461,44 @@ class ApiController extends Controller{
             $order->delivery_price=$request->post('delivery_price');
             $order->payment_id=$request->post('payment_id');
             $order->payment_name=$request->post('payment_name');
-            $order->total=$request->post('total');
+            $order->total=$num+$order->delivery_price;
             $order->status=1;
             $order->create_time=time();
             if($order->validate()){
                 $order->save();
                 //return['status'=>'1','msg'=>'','data'=>$order->toArray()];
-
+                //购物车
+                $carts=Cart::findAll(['member_id'=>$member_id]);
+                foreach($carts as $cart){
+                    $goods = Goods::findOne(['id'=>$cart->goods_id,'status'=>1]);
+                    if($goods==null){
+                        //商品不存在
+                        return['sataus'=>'-1','msg'=>'商品已售完'];
+                    }
+                    if($goods->stock < $cart->amount){
+                        //库存不足
+                        return['sataus'=>'-1','msg'=>'商品库存不足'];
+                    }
+                    $order_goods = new OrderGoods();
+                    //获取订单的ID
+                    $order_goods->order_id= $order->id;
+                    $order_goods->goods_id= $cart->goods_id;
+                    $order_goods->goods_name= $goods->name;
+                    $order_goods->logo= $goods->logo;
+                    $order_goods->price= $goods->shop_price;
+                    $order_goods->goods_num=$cart->amount;
+                    $order_goods->total = ($order_goods->price)*($order_goods->goods_num);
+                    $order_goods->save();
+                    //扣库存 //扣减该商品库存
+                    $goods->stock -= $cart->amount;
+                    $goods->save();
+                    //清空购物车数据
+                    Cart::deleteAll(['member_id'=>$member_id]);
 
             }
             //验证失败
             return ['status'=>'-1','msg'=>$order->getErrors()];
+            }
         }
         return ['status'=>'-1','msg'=>'使用post请求'];
     }
@@ -480,9 +512,129 @@ class ApiController extends Controller{
     public function actionCancelOrder(){
         //将订单的状态改为0
         $member_id=\Yii::$app->user->id;
-        $order=Order::findAll(['member_id'=>$member_id]);
+        $order_id=\Yii::$app->request->post('order_id');
+        $order=Order::findOne(['member_id'=>$member_id,'id'=>$order_id]);
+        $order->status=0;
+        $order->save();
         return ['status'=>'1','msg'=>'','data'=>$order];
     }
+    /**
+     * api高级
+     */
+    //验证码
+    public function actions()
+    {
+        return [
+            'captcha' => [
+                'class' => 'yii\captcha\CaptchaAction',
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+                'minLength'=>3,
+                'maxLength'=>3,
+            ],
+        ];
+    }
+    //文件上传
+    public function actionUploadFile(){
+        $img = UploadedFile::getInstanceByName('img');
+        if($img){
+            $fileName = '/upload/'.uniqid().'.'.$img->extension;
+            $result = $img->saveAs(\Yii::getAlias('@webroot').$fileName,0);
+            if($result){
+                return ['status'=>'1','msg'=>'','data'=>$fileName];
+            }
+            return ['status'=>'-1','msg'=>$img->error];
+        }
+        return ['status'=>'-1','msg'=>'没有文件上传'];
+    }
+    //分页读取数据
+    public function actionList()
+    {
+        //每页显示条数
+        $per_page = \Yii::$app->request->get('per_page',2);
+        //当前第几页
+        $page = \Yii::$app->request->get('page',1);
 
-    //api高级
+        $keywords = \Yii::$app->request->get('keywords');
+
+        $page = $page < 1?1:$page;
+        $query = Goods::find();
+
+        $cate_id = \Yii::$app->request->get('cate_id');
+        $cate = GoodsCategory::findOne(['id'=>$cate_id]);
+        if($cate==null){
+            return['status'=>'-1','msg'=>'该商品分类不存在'];
+        }
+        switch ($cate->depth){
+            case 2://三级分类
+                $query->andWhere(['goods_category_id'=>$cate_id]);
+                break;
+            case 1://二级分类
+                $ids = ArrayHelper::map($cate->children,'id','id');
+                $query->andWhere(['in','goods_category_id',$ids]);
+                break;
+            case 0;//一级分类
+                $ids = ArrayHelper::map($cate->leaves()->asArray()->all(),'id','id');
+                $query->andWhere(['in','goods_category_id',$ids]);
+                break;
+
+        }
+
+        if($keywords){
+            $query->andWhere(['like','name',$keywords]);
+        }
+
+        //总条数
+        $total = $query->count();
+        //获取当前页的商品数据
+        $goods = $query->offset($per_page*($page-1))->limit($per_page)->asArray()->all();
+        return ['status'=>'1','msg'=>'','data'=>[
+            'total'=>$total,
+            'per_page'=>$per_page,
+            'page'=>$page,
+            'goods'=>$goods
+        ]];
+    }
+
+    //发送手机验证码
+    public function actionSendSms()
+    {
+        // 配置信息
+        $config = [
+            'app_key'    => '24480028',
+            'app_secret' => '4bfb70608b2cc23025a1b37f1aa84a68',
+            // 'sandbox'    => true,  // 是否为沙箱环境，默认false
+        ];
+        $client = new Client(new App($config));
+        $req    = new AlibabaAliqinFcSmsNumSend;
+        //确保上一次发送短信间隔超过1分钟
+        $tel = \Yii::$app->request->post('tel');
+        if(!preg_match('/^1[34578]\d{9}$/',$tel)){
+            return ['status'=>'-1','msg'=>'电话号码不正确'];
+        }
+        //检查上次发送时间是否超过1分钟
+        $value = \Yii::$app->cache->get('time_tel_'.$tel);
+        $s = time()-$value;
+        if($s <60){
+            return ['status'=>'-1','msg'=>'请'.(60-$s).'秒后再试'];
+        }
+        $code=rand(100000, 999999);
+        $req->setRecNum($tel)->setSmsParam(['code'=>$code])
+            ->setSmsFreeSignName('短信验证码')
+            ->setSmsTemplateCode('SMS_71835215');
+        $resp = $client->execute($req);
+
+        //$result = \Yii::$app->sms->setNum($tel)->setParam(['code' => $code])->send();
+        $result = 1;
+        if($result){
+            //保存当前验证码 session  mysql  redis  不能保存到cookie
+            \Yii::$app->cache->set('tel_'.$tel,$code,5*60);
+            \Yii::$app->cache->set('time_tel_'.$tel,time(),5*60);
+            //echo 'success'.$code;
+            return ['status'=>'1','msg'=>''];
+        }else{
+            return ['status'=>'-1','msg'=>'短信发送失败'];
+        }
+    }
+
+
 }

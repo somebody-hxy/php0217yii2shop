@@ -35,6 +35,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
         return 'member';
     }
     const SCENARIO_REGISTER = 'register';
+    const SCENARIO_API_REGISTER = 'api_register';
     /**
      * @inheritdoc
      */
@@ -58,6 +59,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
             [['password','newpassword','smsCode'], 'required','on'=>self::SCENARIO_REGISTER],
             [['newpassword'], 'compare','compareAttribute'=>'password','on'=>self::SCENARIO_REGISTER],
             ['code','captcha','captchaAction'=>'site/captcha','on'=>self::SCENARIO_REGISTER],
+            ['code','captcha','captchaAction'=>'api/captcha','on'=>self::SCENARIO_API_REGISTER],
         ];
     }
 
